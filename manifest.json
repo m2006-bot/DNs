@@ -1,16 +1,17 @@
 {
-  "name": "Wateen System",
+  "name": "Wateen Elite v12.3",
   "short_name": "Wateen",
-  "description": "نظام وتين الذكي لإدارة وقت الدراسة",
+  "description": "نظام إدارة الصفقات الدراسية لطلبة السادس العلمي",
   "start_url": "index.html",
   "display": "standalone",
-  "background_color": "#0b0e14",
+  "background_color": "#020408",
   "theme_color": "#00f2fe",
+  "orientation": "portrait",
   "icons": [
     {
-      "src": "https://iili.io/fkhg119.jpg",
+      "src": "https://cdn-icons-png.flaticon.com/512/1063/1063376.png",
       "sizes": "512x512",
-      "type": "image/jpeg",
+      "type": "image/png",
       "purpose": "any maskable"
     }
   ]
