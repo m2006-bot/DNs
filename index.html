@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Wateen Elite | 8H Mission</title>
+    <link rel="manifest" href="manifest.json">
+    <title>Wateen Elite v12.3</title>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&family=DM+Mono:wght@500&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
@@ -16,41 +17,61 @@
         body.theme-deep { --accent: #a29bfe; --glow: rgba(162, 155, 254, 0.4); }
 
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; user-select: none !important; margin: 0; padding: 0; }
-        body { font-family: 'Tajawal', sans-serif; background: var(--bg); color: var(--text); height: 100vh; overflow: hidden; display: flex; justify-content: center; }
-        .app-shell { width: 100%; max-width: 450px; height: 100%; display: flex; flex-direction: column; padding: 20px; }
+        
+        body { 
+            font-family: 'Tajawal', sans-serif; background: var(--bg); color: var(--text); 
+            height: 100vh; height: 100svh; overflow: hidden; display: flex; justify-content: center;
+        }
 
-        .top-bar { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; }
-        .mission-tag { background: var(--glass); border: 1px solid var(--accent); padding: 5px 15px; border-radius: 20px; font-size: 0.8rem; color: var(--accent); font-weight: bold; }
+        .app-shell { width: 100%; max-width: 450px; height: 100%; display: flex; flex-direction: column; padding: min(5vw, 20px); }
 
-        .progress-bar { width: 100%; height: 6px; background: rgba(255,255,255,0.05); border-radius: 10px; margin: 15px 0; overflow: hidden; }
-        #taskProgress { height: 100%; width: 0%; background: var(--accent); box-shadow: 0 0 15px var(--glow); transition: 0.5s ease; }
+        .top-bar { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; flex-shrink: 0; }
+        .mission-tag { border: 1px solid var(--accent); padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; color: var(--accent); font-weight: bold; }
 
-        .main-display { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 20px; }
-        .timer-circle { position: relative; width: 280px; height: 280px; display: flex; align-items: center; justify-content: center; }
-        .timer-svg { width: 100%; height: 100%; transform: rotate(-90deg); position: absolute; }
+        .progress-bar { width: 100%; height: 5px; background: rgba(255,255,255,0.05); border-radius: 10px; margin: 10px 0; flex-shrink: 0; }
+        #taskProgress { height: 100%; width: 0%; background: var(--accent); box-shadow: 0 0 10px var(--glow); transition: 0.5s ease; }
+
+        .main-display { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: space-around; padding: 10px 0; }
+
+        .timer-circle { position: relative; width: min(75vw, 290px); height: min(75vw, 290px); flex-shrink: 0; }
+        .timer-svg { width: 100%; height: 100%; transform: rotate(-90deg); }
         .timer-svg circle { fill: none; stroke-width: 10; stroke-linecap: round; }
         .timer-svg .bg { stroke: rgba(255,255,255,0.03); }
         #progCircle { stroke: var(--accent); stroke-dasharray: 816; stroke-dashoffset: 816; transition: stroke-dashoffset 1s linear; }
 
-        .digits { font-family: 'DM Mono', monospace; font-size: 4.5rem; line-height: 1; }
-        .phase-text { font-size: 0.9rem; letter-spacing: 4px; font-weight: 900; color: var(--accent); margin-top: 10px; }
+        .time-data { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; width: 100%; }
+        .digits { font-family: 'DM Mono', monospace; font-size: min(18vw, 4.5rem); line-height: 1; }
+        .phase-text { font-size: 0.8rem; letter-spacing: 3px; font-weight: 900; color: var(--accent); margin-top: 5px; }
 
-        .btn-start { background: var(--accent); color: #000; border: none; padding: 20px 70px; border-radius: 40px; font-size: 1.4rem; font-weight: 900; box-shadow: 0 12px 30px var(--glow); cursor: pointer; }
+        .btn-start { 
+            background: var(--accent); color: #000; border: none; padding: 18px min(15vw, 70px); 
+            border-radius: 40px; font-size: 1.3rem; font-weight: 900; box-shadow: 0 10px 25px var(--glow); 
+            cursor: pointer; transition: 0.3s; flex-shrink: 0;
+        }
         
-        .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.98); display: none; align-items: center; justify-content: center; z-index: 2000; backdrop-filter: blur(15px); }
-        .modal { background: var(--card); width: 90%; max-width: 400px; border-radius: 35px; padding: 25px; border: 1px solid rgba(255,255,255,0.1); }
-        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .back-btn { font-size: 1.5rem; cursor: pointer; color: var(--accent); width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.05); border-radius: 50%; }
+        #quoteDisp { font-size: 0.85rem; color: #64748b; text-align: center; padding: 0 15px; min-height: 2.5em; flex-shrink: 0; }
 
-        .bottom-nav { display: flex; justify-content: center; gap: 80px; padding: 25px 0; }
-        .nav-icon { font-size: 2rem; cursor: pointer; }
+        .bottom-nav { display: flex; justify-content: center; gap: 70px; padding: 20px 0; flex-shrink: 0; }
+        .nav-icon { font-size: 1.8rem; cursor: pointer; transition: 0.2s; }
+
+        /* Modals */
+        .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.98); display: none; align-items: center; justify-content: center; z-index: 2000; backdrop-filter: blur(10px); }
+        .modal { background: var(--card); width: 90%; max-width: 400px; border-radius: 30px; padding: 25px; border: 1px solid rgba(255,255,255,0.1); }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .back-btn { font-size: 1.3rem; cursor: pointer; color: var(--accent); width: 35px; height: 35px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.05); border-radius: 50%; }
+
+        @media (max-height: 600px) {
+            .timer-circle { width: 200px; height: 200px; }
+            .digits { font-size: 3rem; }
+            .btn-start { padding: 12px 50px; font-size: 1.1rem; }
+        }
     </style>
 </head>
 <body>
 
     <div class="app-shell">
         <div class="top-bar">
-            <div style="font-weight:900; color:var(--accent)">MISSION: 8 HOURS</div>
+            <div style="font-weight:900; color:var(--accent); font-size: 0.9rem;">WATEEN ELITE V12.3</div>
             <div id="sessionCount" class="mission-tag">الصفقة: 0 / 12</div>
         </div>
         
@@ -62,14 +83,14 @@
                     <circle class="bg" cx="140" cy="140" r="130"></circle>
                     <circle id="progCircle" cx="140" cy="140" r="130"></circle>
                 </svg>
-                <div style="text-align: center; z-index: 5;">
+                <div class="time-data">
                     <div id="timeDisp" class="digits">40:00</div>
                     <div id="phaseDisp" class="phase-text">تـركـيـز</div>
                 </div>
             </div>
 
             <button id="mainBtn" class="btn-start" onclick="toggleTimer()">ابدأي الصفقة</button>
-            <div id="quoteDisp" style="font-size:0.9rem; color:#64748b; text-align:center; padding:0 30px;">"8 ساعات دراسة تصنع دكتورة ناجحة"</div>
+            <div id="quoteDisp">"8 ساعات دراسة تصنع دكتورة ناجحة"</div>
         </div>
 
         <div class="bottom-nav">
@@ -80,30 +101,37 @@
 
     <div id="taskModal" class="overlay">
         <div class="modal">
-            <div class="modal-header"><h3>المهام اليومية</h3><div class="back-btn" onclick="hideModal('taskModal')">✕</div></div>
-            <input type="text" id="taskInput" placeholder="أضيفي مادة..." style="width:100%; padding:15px; border-radius:15px; border:none; background:#1e293b; color:#fff; margin-bottom:15px;">
-            <button onclick="addTask()" style="width:100%; background:var(--accent); padding:10px; border-radius:10px; font-weight:bold; border:none; margin-bottom:20px;">إضافة</button>
-            <div id="taskList" style="max-height:250px; overflow-y:auto"></div>
+            <div class="modal-header"><h3>المهام</h3><div class="back-btn" onclick="hideModal('taskModal')">✕</div></div>
+            <div style="display:flex; gap:8px; margin-bottom:15px;">
+                <input type="text" id="taskInput" placeholder="أضيفي مادة..." style="flex:1; padding:12px; border-radius:12px; border:none; background:#1e293b; color:#fff">
+                <button onclick="addTask()" style="background:var(--accent); border:none; width:45px; border-radius:12px; font-weight:bold">+</button>
+            </div>
+            <div id="taskList" style="max-height:200px; overflow-y:auto"></div>
         </div>
     </div>
 
     <div id="themeModal" class="overlay">
         <div class="modal">
-            <div class="modal-header"><h3>تغيير الثيم</h3><div class="back-btn" onclick="hideModal('themeModal')">✕</div></div>
+            <div class="modal-header"><h3>الثيمات</h3><div class="back-btn" onclick="hideModal('themeModal')">✕</div></div>
             <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
-                <button onclick="setTheme('neon')" style="background:#00f2fe; padding:15px; border-radius:10px; border:none; font-weight:bold;">Neon</button>
-                <button onclick="setTheme('sunset')" style="background:#ff7e5f; padding:15px; border-radius:10px; border:none; font-weight:bold;">Sunset</button>
-                <button onclick="setTheme('forest')" style="background:#00ff88; padding:15px; border-radius:10px; border:none; font-weight:bold;">Forest</button>
-                <button onclick="setTheme('deep')" style="background:#a29bfe; padding:15px; border-radius:10px; border:none; font-weight:bold;">Deep</button>
+                <button onclick="setTheme('neon')" style="background:#00f2fe; color:#000; padding:12px; border:none; border-radius:10px; font-weight:bold">Neon</button>
+                <button onclick="setTheme('sunset')" style="background:#ff7e5f; color:#000; padding:12px; border:none; border-radius:10px; font-weight:bold">Sunset</button>
+                <button onclick="setTheme('forest')" style="background:#00ff88; color:#000; padding:12px; border:none; border-radius:10px; font-weight:bold">Forest</button>
+                <button onclick="setTheme('deep')" style="background:#a29bfe; color:#000; padding:12px; border:none; border-radius:10px; font-weight:bold">Deep</button>
             </div>
         </div>
     </div>
 
     <script>
+        // SW Registration
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js').catch(() => {});
+        }
+
         let state = {
             timeLeft: 40 * 60, duration: 40 * 60, timer: null,
             isWork: true, sessionsCompleted: 0,
-            tasks: JSON.parse(localStorage.getItem('wateen_8h_tasks')) || []
+            tasks: JSON.parse(localStorage.getItem('wateen_final_tasks')) || []
         };
 
         function toggleTimer() {
@@ -112,7 +140,7 @@
                 document.getElementById('mainBtn').innerText = "استئناف";
             } else {
                 state.timer = setInterval(tick, 1000);
-                document.getElementById('mainBtn').innerText = state.isWork ? "تركيز..." : "استراحة...";
+                document.getElementById('mainBtn').innerText = "تركيز...";
             }
         }
 
@@ -131,25 +159,17 @@
         function handleFinish() {
             clearInterval(state.timer); state.timer = null;
             confetti({ particleCount: 150, spread: 70 });
-
             if (state.isWork) {
                 state.sessionsCompleted++;
                 state.isWork = false; state.timeLeft = 10 * 60; state.duration = 10 * 60;
-                document.getElementById('phaseDisp').innerText = "اسـتـراحة (10د)";
-                document.getElementById('phaseDisp').style.color = "var(--success)";
+                document.getElementById('phaseDisp').innerText = "اسـتـراحة";
             } else {
                 state.isWork = true; state.timeLeft = 40 * 60; state.duration = 40 * 60;
-                document.getElementById('phaseDisp').innerText = "تـركـيـز (40د)";
-                document.getElementById('phaseDisp').style.color = "var(--accent)";
+                document.getElementById('phaseDisp').innerText = "تـركـيـز";
             }
-            
             document.getElementById('sessionCount').innerText = `الصفقة: ${state.sessionsCompleted} / 12`;
             document.getElementById('taskProgress').style.width = (state.sessionsCompleted / 12) * 100 + '%';
             document.getElementById('mainBtn').innerText = "ابدأي الصفقة";
-
-            if (state.sessionsCompleted === 12) {
-                alert("مبروك يا دكتورة مروة! أنجزتِ 8 ساعات دراسة صافية اليوم. أنتِ فخر لدفعة 2026!");
-            }
             updateUI();
         }
 
@@ -162,11 +182,12 @@
         }
 
         function renderTasks() {
-            localStorage.setItem('wateen_8h_tasks', JSON.stringify(state.tasks));
+            localStorage.setItem('wateen_final_tasks', JSON.stringify(state.tasks));
             document.getElementById('taskList').innerHTML = state.tasks.map((t, i) => `
-                <div style="background:rgba(255,255,255,0.05); padding:10px; border-radius:10px; margin-bottom:5px; display:flex; justify-content:space-between; align-items:center;">
-                    <span style="${t.done?'text-decoration:line-through; opacity:0.5':''}">${t.text}</span>
+                <div style="background:rgba(255,255,255,0.05); padding:10px; border-radius:10px; margin-bottom:5px; display:flex; align-items:center; gap:10px">
                     <input type="checkbox" ${t.done?'checked':''} onchange="state.tasks[${i}].done=!state.tasks[${i}].done; renderTasks();">
+                    <span style="flex:1; ${t.done?'opacity:0.5; text-decoration:line-through':''}">${t.text}</span>
+                    <span onclick="state.tasks.splice(${i},1); renderTasks();" style="color:var(--danger)">🗑️</span>
                 </div>
             `).join('');
         }
