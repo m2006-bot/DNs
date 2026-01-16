@@ -1,18 +1,16 @@
 {
-  "name": "Wateen Elite v12.3",
+  "name": "Wateen Elite v12.4",
   "short_name": "Wateen",
-  "description": "نظام إدارة الصفقات الدراسية لطلبة السادس العلمي",
-  "start_url": "index.html",
-  "display": "standalone",
+  "start_url": "./index.html",
+  "display": "fullscreen",
   "background_color": "#020408",
-  "theme_color": "#00f2fe",
+  "theme_color": "#020408",
   "orientation": "portrait",
   "icons": [
     {
       "src": "https://cdn-icons-png.flaticon.com/512/1063/1063376.png",
       "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any maskable"
+      "type": "image/png"
     }
   ]
 }
