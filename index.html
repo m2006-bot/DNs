@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0b0e14">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="apple-touch-icon" href="https://iili.io/fkhg119.jpg">
+
+    <title>Wateen System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <style>
+        :root {
+            --bg-main: #0b0e14;
+            --glass: rgba(23, 28, 41, 0.9);
+            --accent: #00f2fe;
+            --accent-2: #4facfe;
+            --text-main: #e2e8f0;
+        }
+
+        * {
+            user-select: none !important;
+            -webkit-user-select: none !important;
+            -webkit-tap-highlight-color: transparent;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background: var(--bg-main);
+            color: var(--text-main);
+            margin: 0;
+            padding: 15px;
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            gap: 20px;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        @media (max-width: 900px) {
+            body { grid-template-columns: 1fr; overflow-y: auto; height: auto; }
+        }
+
+        .side-panel { display: flex; flex-direction: column; gap: 15px; height: 100%; }
+
+        .glass-card {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 20px;
+            padding: 20px;
+            position: relative;
+        }
+
+        /* تعديل منطقة التطبيق المركزية لرفع العناصر */
+        .main-app-zone {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start; /* رفع للأعلى */
+            padding-top: 50px;
+            background: rgba(15, 23, 42, 0.5);
+            border-radius: 30px;
+            border: 1px solid rgba(255,255,255,0.03);
+            position: relative;
+        }
+
+        .timer-circle-wrap {
+            position: relative;
+            width: 320px;
+            height: 320px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .timer-val {
+            font-size: 5rem;
+            font-weight: 900;
+            background: linear-gradient(to bottom, #fff, #94a3b8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-family: monospace;
+        }
+
+        /* المهام وتنسيق النص الطويل */
+        #taskList { margin-top:15px; max-height: 250px; overflow-y: auto; }
+        .task-item {
+            background: rgba(255,255,255,0.05);
+            padding: 10px;
+            border-radius: 10px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            word-break: break-all;
+            border-right: 3px solid var(--accent);
+        }
+
+        .main-btn {
+            background: linear-gradient(135deg, var(--accent), var(--accent-2));
+            color: #000;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 50px;
+            font-weight: 900;
+            cursor: pointer;
+            transition: 0.3s;
+            box-shadow: 0 10px 20px rgba(0, 242, 254, 0.2);
+        }
+
+        .btn-reset { background: #1e293b; color: white; margin-right: 10px; }
+
+        .wateen-signature {
+            position: absolute;
+            bottom: 15px;
+            left: 20px;
+            font-size: 0.75rem;
+            color: var(--accent);
+            opacity: 0.8;
+            border-left: 2px solid var(--accent);
+            padding-left: 10px;
+        }
+
+        #currentPhase { margin-top: 20px; font-size: 1.6rem; font-weight: bold; color: var(--accent); }
+        #motivationText { margin: 10px 0 25px 0; text-align: center; color: #94a3b8; font-size: 1rem; padding: 0 20px; }
+
+    </style>
+</head>
+<body>
+
+    <div class="side-panel">
+        <div class="glass-card">
+            <h3 style="margin:0 0 15px 0;">المهام الحالية 🎯</h3>
+            <div style="display:flex; gap:8px;">
+                <input type="text" id="taskInput" placeholder="أدخل هدفك..." style="flex:1; background:rgba(0,0,0,0.2); border:1px solid #334155; padding:12px; border-radius:12px; color:white; outline:none;">
+                <button onclick="addTask()" style="background:var(--accent); border:none; padding:10px 15px; border-radius:10px; cursor:pointer; font-weight:bold;">+</button>
+            </div>
+            <div id="taskList"></div>
+        </div>
+
+        <div class="glass-card" style="flex:1;">
+            <h3 style="margin:0 0 10px 0;">تحليل الإنجاز 📊</h3>
+            <canvas id="analyticsChart"></canvas>
+            <p style="text-align:center; font-size:0.8rem; margin-top:10px;">الجلسات: <span id="sessionCounter" style="color:var(--accent); font-weight:bold;">0</span></p>
+        </div>
+    </div>
+
+    <div class="main-app-zone">
+        <div style="position: absolute; top: 20px; left: 20px; border: 1px solid var(--accent); padding: 5px 12px; border-radius: 12px; font-size: 0.8rem; color: var(--accent);">Wateen System V2.0</div>
+        
+        <div class="timer-circle-wrap">
+            <svg width="320" height="320" style="position:absolute; transform: rotate(-90deg);">
+                <circle cx="160" cy="160" r="150" stroke="#1e293b" stroke-width="10" fill="none" />
+                <circle id="progressCircle" cx="160" cy="160" r="150" stroke="var(--accent)" stroke-width="10" fill="none" 
+                        stroke-dasharray="942" stroke-dashoffset="942" stroke-linecap="round" style="transition: 1s linear;" />
+            </svg>
+            <div class="timer-val" id="timerDisplay">40:00</div>
+        </div>
+
+        <div id="currentPhase">مستعدة للتركيز؟</div>
+        <div id="motivationText">"مستقبلكِ يُصنع الآن وتين."</div>
+
+        <div style="display: flex;">
+            <button id="startBtn" class="main-btn" onclick="toggleTimer()">ابدأ الجلسة</button>
+            <button class="main-btn btn-reset" onclick="resetTimer()">إعادة تعيين</button>
+        </div>
+
+        <div class="wateen-signature">
+            DEVELOPED BY: <b>WATEEN</b><br>
+            MARWA MOHAMMED © 2026
+        </div>
+    </div>
+
+    <script>
+        if ('serviceWorker' in navigator) { navigator.serviceWorker.register('service-worker.js'); }
+
+        let workTime = 40 * 60, breakTime = 10 * 60, timeLeft = workTime, timerId = null, isWork = true, totalMins = 0;
+
+        const ctx = document.getElementById('analyticsChart').getContext('2d');
+        let chart = new Chart(ctx, {
+            type: 'line',
+            data: { labels: ['0'], datasets: [{ data: [0], borderColor: '#00f2fe', tension: 0.4, fill: true, backgroundColor: 'rgba(0,242,254,0.1)' }] },
+            options: { plugins: { legend: { display: false } }, scales: { x: { display: false }, y: { display: false } } }
+        });
+
+        function toggleTimer() {
+            if (timerId) { clearInterval(timerId); timerId = null; document.getElementById('startBtn').textContent = "استئناف"; }
+            else { timerId = setInterval(tick, 1000); document.getElementById('startBtn').textContent = "إيقاف مؤقت"; }
+        }
+
+        function tick() {
+            if (timeLeft <= 0) {
+                clearInterval(timerId); timerId = null;
+                if (isWork) {
+                    totalMins += 40; updateStats();
+                    if(totalMins >= 480) confetti({ particleCount: 200 });
+                    isWork = false; timeLeft = breakTime;
+                } else { isWork = true; timeLeft = workTime; }
+                document.getElementById('currentPhase').textContent = isWork ? "جلسة التركيز" : "وقت المكافأة 🎮";
+                updateUI(); document.getElementById('startBtn').textContent = "ابدأ الجلسة";
+            } else { timeLeft--; updateUI(); }
+        }
+
+        function updateUI() {
+            const m = Math.floor(timeLeft / 60), s = timeLeft % 60;
+            document.getElementById('timerDisplay').textContent = `${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+            const limit = isWork ? workTime : breakTime;
+            document.getElementById('progressCircle').style.strokeDashoffset = 942 - (timeLeft / limit) * 942;
+        }
+
+        function resetTimer() {
+            clearInterval(timerId); timerId = null;
+            isWork = true; timeLeft = workTime;
+            document.getElementById('startBtn').textContent = "ابدأ الجلسة";
+            document.getElementById('currentPhase').textContent = "مستعدة للتركيز؟";
+            updateUI();
+        }
+
+        function addTask() {
+            const i = document.getElementById('taskInput');
+            if(!i.value) return;
+            const d = document.createElement('div'); d.className = 'task-item';
+            d.innerHTML = `<input type="checkbox" onchange="this.parentElement.style.opacity=0.4"> <span>${i.value}</span>`;
+            document.getElementById('taskList').prepend(d); i.value = "";
+        }
+
+        function updateStats() {
+            document.getElementById('sessionCounter').textContent = Math.floor(totalMins / 40);
+            chart.data.labels.push(""); chart.data.datasets[0].data.push(totalMins); chart.update();
+        }
+    </script>
+</body>
+</html>
