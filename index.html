@@ -2,11 +2,18 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="mobile-web-app-capable" content="yes">
     <link rel="manifest" href="manifest.json">
-    <title>Wateen Elite v12.3</title>
+    <meta name="theme-color" content="#020408">
+    
+    <title>Wateen Elite v12.4</title>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&family=DM+Mono:wght@500&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
     <style>
         :root {
             --bg: #020408; --accent: #00f2fe; --glow: rgba(0, 242, 254, 0.4);
@@ -23,55 +30,41 @@
             height: 100vh; height: 100svh; overflow: hidden; display: flex; justify-content: center;
         }
 
-        .app-shell { width: 100%; max-width: 450px; height: 100%; display: flex; flex-direction: column; padding: min(5vw, 20px); }
+        .app-shell { width: 100%; max-width: 450px; height: 100%; display: flex; flex-direction: column; padding: 20px; padding-top: env(safe-area-inset-top); }
 
-        .top-bar { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; flex-shrink: 0; }
-        .mission-tag { border: 1px solid var(--accent); padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; color: var(--accent); font-weight: bold; }
+        .top-bar { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; }
+        .mission-tag { border: 1px solid var(--accent); padding: 5px 15px; border-radius: 20px; font-size: 0.8rem; color: var(--accent); font-weight: bold; }
 
-        .progress-bar { width: 100%; height: 5px; background: rgba(255,255,255,0.05); border-radius: 10px; margin: 10px 0; flex-shrink: 0; }
-        #taskProgress { height: 100%; width: 0%; background: var(--accent); box-shadow: 0 0 10px var(--glow); transition: 0.5s ease; }
+        .progress-bar { width: 100%; height: 6px; background: rgba(255,255,255,0.05); border-radius: 10px; margin: 15px 0; overflow: hidden; }
+        #taskProgress { height: 100%; width: 0%; background: var(--accent); box-shadow: 0 0 15px var(--glow); transition: 0.5s ease; }
 
-        .main-display { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: space-around; padding: 10px 0; }
-
-        .timer-circle { position: relative; width: min(75vw, 290px); height: min(75vw, 290px); flex-shrink: 0; }
-        .timer-svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+        .main-display { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 30px; }
+        .timer-circle { position: relative; width: min(75vw, 290px); height: min(75vw, 290px); display: flex; align-items: center; justify-content: center; }
+        .timer-svg { width: 100%; height: 100%; transform: rotate(-90deg); position: absolute; }
         .timer-svg circle { fill: none; stroke-width: 10; stroke-linecap: round; }
         .timer-svg .bg { stroke: rgba(255,255,255,0.03); }
         #progCircle { stroke: var(--accent); stroke-dasharray: 816; stroke-dashoffset: 816; transition: stroke-dashoffset 1s linear; }
 
-        .time-data { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; width: 100%; }
-        .digits { font-family: 'DM Mono', monospace; font-size: min(18vw, 4.5rem); line-height: 1; }
-        .phase-text { font-size: 0.8rem; letter-spacing: 3px; font-weight: 900; color: var(--accent); margin-top: 5px; }
+        .digits { font-family: 'DM Mono', monospace; font-size: min(18vw, 4.5rem); line-height: 1; z-index: 5; }
+        .phase-text { font-size: 0.9rem; letter-spacing: 4px; font-weight: 900; color: var(--accent); margin-top: 10px; }
 
-        .btn-start { 
-            background: var(--accent); color: #000; border: none; padding: 18px min(15vw, 70px); 
-            border-radius: 40px; font-size: 1.3rem; font-weight: 900; box-shadow: 0 10px 25px var(--glow); 
-            cursor: pointer; transition: 0.3s; flex-shrink: 0;
-        }
+        .btn-start { background: var(--accent); color: #000; border: none; padding: 20px 70px; border-radius: 40px; font-size: 1.4rem; font-weight: 900; box-shadow: 0 12px 30px var(--glow); cursor: pointer; transition: 0.3s; }
         
-        #quoteDisp { font-size: 0.85rem; color: #64748b; text-align: center; padding: 0 15px; min-height: 2.5em; flex-shrink: 0; }
-
-        .bottom-nav { display: flex; justify-content: center; gap: 70px; padding: 20px 0; flex-shrink: 0; }
-        .nav-icon { font-size: 1.8rem; cursor: pointer; transition: 0.2s; }
+        .bottom-nav { display: flex; justify-content: center; gap: 80px; padding: 30px 0; padding-bottom: env(safe-area-inset-bottom); }
+        .nav-icon { font-size: 2rem; cursor: pointer; }
 
         /* Modals */
-        .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.98); display: none; align-items: center; justify-content: center; z-index: 2000; backdrop-filter: blur(10px); }
-        .modal { background: var(--card); width: 90%; max-width: 400px; border-radius: 30px; padding: 25px; border: 1px solid rgba(255,255,255,0.1); }
-        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-        .back-btn { font-size: 1.3rem; cursor: pointer; color: var(--accent); width: 35px; height: 35px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.05); border-radius: 50%; }
-
-        @media (max-height: 600px) {
-            .timer-circle { width: 200px; height: 200px; }
-            .digits { font-size: 3rem; }
-            .btn-start { padding: 12px 50px; font-size: 1.1rem; }
-        }
+        .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.98); display: none; align-items: center; justify-content: center; z-index: 2000; backdrop-filter: blur(15px); }
+        .modal { background: var(--card); width: 90%; max-width: 400px; border-radius: 35px; padding: 25px; border: 1px solid rgba(255,255,255,0.1); }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .back-btn { font-size: 1.5rem; cursor: pointer; color: var(--accent); background: rgba(255,255,255,0.05); width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; border-radius: 50%; }
     </style>
 </head>
 <body>
 
     <div class="app-shell">
         <div class="top-bar">
-            <div style="font-weight:900; color:var(--accent); font-size: 0.9rem;">WATEEN ELITE V12.3</div>
+            <div style="font-weight:900; color:var(--accent)">WATEEN ELITE V12.4</div>
             <div id="sessionCount" class="mission-tag">الصفقة: 0 / 12</div>
         </div>
         
@@ -83,14 +76,14 @@
                     <circle class="bg" cx="140" cy="140" r="130"></circle>
                     <circle id="progCircle" cx="140" cy="140" r="130"></circle>
                 </svg>
-                <div class="time-data">
+                <div style="text-align: center; z-index: 10;">
                     <div id="timeDisp" class="digits">40:00</div>
                     <div id="phaseDisp" class="phase-text">تـركـيـز</div>
                 </div>
             </div>
 
             <button id="mainBtn" class="btn-start" onclick="toggleTimer()">ابدأي الصفقة</button>
-            <div id="quoteDisp">"8 ساعات دراسة تصنع دكتورة ناجحة"</div>
+            <div id="quoteDisp" style="font-size:0.9rem; color:#64748b; text-align:center; padding:0 30px; min-height: 3em;">"دراسة 8 ساعات هي صفقات النجاح"</div>
         </div>
 
         <div class="bottom-nav">
@@ -101,29 +94,28 @@
 
     <div id="taskModal" class="overlay">
         <div class="modal">
-            <div class="modal-header"><h3>المهام</h3><div class="back-btn" onclick="hideModal('taskModal')">✕</div></div>
-            <div style="display:flex; gap:8px; margin-bottom:15px;">
-                <input type="text" id="taskInput" placeholder="أضيفي مادة..." style="flex:1; padding:12px; border-radius:12px; border:none; background:#1e293b; color:#fff">
+            <div class="modal-header"><h3>المهام اليومية</h3><div class="back-btn" onclick="hideModal('taskModal')">✕</div></div>
+            <div style="display:flex; gap:10px; margin-bottom:20px;">
+                <input type="text" id="taskInput" placeholder="أضيفي هدفاً..." style="flex:1; padding:12px; border-radius:12px; border:none; background:#1e293b; color:#fff">
                 <button onclick="addTask()" style="background:var(--accent); border:none; width:45px; border-radius:12px; font-weight:bold">+</button>
             </div>
-            <div id="taskList" style="max-height:200px; overflow-y:auto"></div>
+            <div id="taskList" style="max-height:250px; overflow-y:auto"></div>
         </div>
     </div>
 
     <div id="themeModal" class="overlay">
         <div class="modal">
-            <div class="modal-header"><h3>الثيمات</h3><div class="back-btn" onclick="hideModal('themeModal')">✕</div></div>
-            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
-                <button onclick="setTheme('neon')" style="background:#00f2fe; color:#000; padding:12px; border:none; border-radius:10px; font-weight:bold">Neon</button>
-                <button onclick="setTheme('sunset')" style="background:#ff7e5f; color:#000; padding:12px; border:none; border-radius:10px; font-weight:bold">Sunset</button>
-                <button onclick="setTheme('forest')" style="background:#00ff88; color:#000; padding:12px; border:none; border-radius:10px; font-weight:bold">Forest</button>
-                <button onclick="setTheme('deep')" style="background:#a29bfe; color:#000; padding:12px; border:none; border-radius:10px; font-weight:bold">Deep</button>
+            <div class="modal-header"><h3>اختيار اللون</h3><div class="back-btn" onclick="hideModal('themeModal')">✕</div></div>
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
+                <button onclick="setTheme('neon')" style="background:#00f2fe; color:#000; padding:15px; border:none; border-radius:12px; font-weight:bold">Neon</button>
+                <button onclick="setTheme('sunset')" style="background:#ff7e5f; color:#000; padding:15px; border:none; border-radius:12px; font-weight:bold">Sunset</button>
+                <button onclick="setTheme('forest')" style="background:#00ff88; color:#000; padding:15px; border:none; border-radius:12px; font-weight:bold">Forest</button>
+                <button onclick="setTheme('deep')" style="background:#a29bfe; color:#000; padding:15px; border:none; border-radius:12px; font-weight:bold">Deep</button>
             </div>
         </div>
     </div>
 
     <script>
-        // SW Registration
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('sw.js').catch(() => {});
         }
@@ -131,16 +123,16 @@
         let state = {
             timeLeft: 40 * 60, duration: 40 * 60, timer: null,
             isWork: true, sessionsCompleted: 0,
-            tasks: JSON.parse(localStorage.getItem('wateen_final_tasks')) || []
+            tasks: JSON.parse(localStorage.getItem('wateen_v12_tasks')) || []
         };
 
         function toggleTimer() {
             if (state.timer) {
                 clearInterval(state.timer); state.timer = null;
-                document.getElementById('mainBtn').innerText = "استئناف";
+                document.getElementById('mainBtn').innerText = "استئناف الصفقة";
             } else {
                 state.timer = setInterval(tick, 1000);
-                document.getElementById('mainBtn').innerText = "تركيز...";
+                document.getElementById('mainBtn').innerText = "تركيز عميق...";
             }
         }
 
@@ -182,7 +174,7 @@
         }
 
         function renderTasks() {
-            localStorage.setItem('wateen_final_tasks', JSON.stringify(state.tasks));
+            localStorage.setItem('wateen_v12_tasks', JSON.stringify(state.tasks));
             document.getElementById('taskList').innerHTML = state.tasks.map((t, i) => `
                 <div style="background:rgba(255,255,255,0.05); padding:10px; border-radius:10px; margin-bottom:5px; display:flex; align-items:center; gap:10px">
                     <input type="checkbox" ${t.done?'checked':''} onchange="state.tasks[${i}].done=!state.tasks[${i}].done; renderTasks();">
@@ -195,7 +187,6 @@
         function setTheme(t) { document.body.className = 'theme-' + t; }
         function showModal(id) { document.getElementById(id).style.display = 'flex'; }
         function hideModal(id) { document.getElementById(id).style.display = 'none'; }
-
         renderTasks(); updateUI();
     </script>
 </body>
