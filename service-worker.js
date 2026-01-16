@@ -1,14 +1,7 @@
-const CACHE_NAME = 'wateen-cache-v1';
-const assets = [
-  './',
-  './index.html',
-  'https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&family=DM+Mono:wght@500&display=swap'
-];
-
+const CACHE = 'wateen-v12.4';
 self.addEventListener('install', e => {
-  e.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(assets)));
+  e.waitUntil(caches.open(CACHE).then(c => c.addAll(['./', './index.html', './manifest.json'])));
 });
-
 self.addEventListener('fetch', e => {
-  e.respondWith(caches.match(e.request).then(res => res || fetch(e.request)));
+  e.respondWith(caches.match(e.request).then(r => r || fetch(e.request)));
 });
