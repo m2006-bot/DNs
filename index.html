@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Wateen OS Elite - iPhone Edition</title>
     
+    <link rel="manifest" href="manifest.json">
+    
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Wateen OS">
@@ -97,7 +99,6 @@
         .btn-play.active { background: var(--pink); color: #fff; }
         .btn-off { background: var(--ios-gray); color: #fff; font-size: 1.6rem; }
 
-        /* iPhone Toast Notification */
         .toast { position: fixed; top: -120px; left: 20px; right: 20px; background: rgba(28, 28, 30, 0.95); backdrop-filter: blur(30px); padding: 22px; border-radius: 28px; z-index: 1000000; display: flex; align-items: center; gap: 18px; transition: 0.7s cubic-bezier(0.19, 1, 0.22, 1); border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
         .toast.show { top: 65px; }
     </style>
@@ -171,7 +172,15 @@
     </div>
 
     <script>
-        // إرجاع قائمة النصائح كاملة
+        // --- PWA Service Worker Registration ---
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js')
+                .then(reg => console.log('Service Worker Registered!'))
+                .catch(err => console.log('Service Worker Failed:', err));
+            });
+        }
+
         const phrases = [
             "ترا الوزاري ميرحم، ركز يا بطل! 🧠", "عوف الموبايل، ترا مارك ميفيدك بالنتائج 🌚", "الدماغ يحتاج فرمتة دراسية، ابدأ الآن! 🚀",
             "عبالك ما أدري بيك صافن؟ ركز! 😂", "الكتب دا تبجي من قلة التركيز 📖", "كل ثانية نوم هسه، تقابلها حسرة باجر! 🤣",
@@ -282,7 +291,6 @@
             }
         }
 
-        // إرجاع وظائف الـ Modal وإعادة الضبط المصلحة
         function openModal() { playSfx(400); document.getElementById('ios-modal').style.display = 'flex'; }
         function closeModal() { document.getElementById('ios-modal').style.display = 'none'; }
         
