@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Wateen OS v1.1 Gold</title>
+    <title>Wateen OS Elite - iPhone Edition</title>
     
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -13,161 +13,295 @@
     
     <link rel="apple-touch-icon" href="https://iili.io/fkhg119.jpg">
     <link rel="icon" href="https://iili.io/fkhg119.jpg">
-    <link rel="manifest" href="manifest.json">
 
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;500;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
         :root {
-            --bg: #000;
+            --bg: #000000;
+            --ios-gray: #1c1c1e;
             --accent: #00f3ff;
+            --gold: #ffd700;
             --pink: #ff2d55;
-            --card: #121212;
-            --sheet-bg: #1c1c1e;
+            --timer-fs: clamp(6rem, 28vw, 10rem);
         }
 
-        /* منع النسخ والاختيار لضمان تجربة التطبيق الكاملة */
         * { 
-            box-sizing: border-box; margin: 0; padding: 0; 
+            box-sizing: border-box; 
+            margin: 0; padding: 0; 
             -webkit-user-select: none; user-select: none;
             -webkit-touch-callout: none; -webkit-tap-highlight-color: transparent;
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Tajawal", sans-serif;
         }
 
         body {
             background-color: var(--bg); color: #fff;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-            height: 100vh; overflow: hidden; display: flex; flex-direction: column;
-            background: radial-gradient(circle at bottom, #0a0a0a 0%, #000 100%);
+            height: 100dvh; overflow: hidden; display: flex; flex-direction: column;
         }
 
-        .app-shell { 
-            flex: 1; display: flex; flex-direction: column; 
-            padding: env(safe-area-inset-top) 25px env(safe-area-inset-bottom); 
+        /* Splash Screen (10s) */
+        #splash {
+            position: fixed; inset: 0; background: #000; z-index: 100000;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            padding: 35px; text-align: center; transition: 1.2s ease-in-out;
         }
+        .splash-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); padding: 30px; border-radius: 32px; max-width: 450px; }
+        .splash-logo { width: 85px; height: 85px; border-radius: 22px; border: 2px solid var(--accent); margin-bottom: 20px; box-shadow: 0 0 20px rgba(0,243,255,0.2); }
+        .m-name { color: var(--gold); font-weight: 900; text-shadow: 0 0 10px rgba(255, 215, 0, 0.4); }
+        .loading-bar { width: 100%; height: 4px; background: #222; border-radius: 10px; margin-top: 25px; overflow: hidden; }
+        .loading-fill { width: 0%; height: 100%; background: var(--accent); animation: load 10s linear forwards; }
+        @keyframes load { to { width: 100%; } }
 
-        /* Header */
-        .brand-header { display: flex; align-items: center; justify-content: center; gap: 12px; padding-top: 25px; }
-        .user-img { width: 50px; height: 50px; border-radius: 50%; border: 2px solid var(--accent); object-fit: cover; box-shadow: 0 0 15px var(--accent); }
-        .brand-header h1 { font-family: 'Tajawal'; font-size: 1.8rem; letter-spacing: 1px; }
-
-        .slogan-text { 
-            text-align: center; color: #555; font-size: 0.85rem; 
-            font-family: 'Tajawal'; margin-top: 8px; margin-bottom: 35px; /* فراغ لجمالية التصميم */
-            font-weight: bold;
+        /* Custom iOS Modal */
+        #ios-modal {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(15px);
+            z-index: 2000000; display: none; align-items: center; justify-content: center; padding: 25px;
         }
-
-        /* Smart Alert (Top) */
-        .smart-alert {
-            position: fixed; top: -100px; left: 50%; transform: translateX(-50%);
-            width: 90%; background: rgba(30, 30, 30, 0.95); backdrop-filter: blur(25px);
-            padding: 15px; border-radius: 20px; border: 1px solid #333;
-            display: flex; align-items: center; gap: 12px; z-index: 10000;
-            transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        .modal-content {
+            background: #1c1c1e; width: 100%; max-width: 280px; border-radius: 20px;
+            padding: 20px; text-align: center; border: 1px solid rgba(255,255,255,0.1);
         }
-        .smart-alert.active { top: 30px; }
+        .modal-btns { display: flex; flex-direction: column; gap: 1px; background: #3a3a3c; margin-top: 20px; border-radius: 12px; overflow: hidden; }
+        .m-btn { padding: 15px; border: none; font-size: 1.1rem; background: #1c1c1e; color: #0a84ff; cursor: pointer; font-weight: 500; outline: none; }
+        .m-btn-reset { color: #ff453a; font-weight: 700; border-bottom: 1px solid #3a3a3c; }
 
-        /* Action Sheet */
-        .action-sheet-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.85); display: none; z-index: 10001; align-items: flex-end;
-        }
-        .action-sheet { width: 100%; background: var(--sheet-bg); border-radius: 25px 25px 0 0; padding: 25px; animation: slideUp 0.3s ease; }
-        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
-        
-        .sheet-btn { width: 100%; padding: 18px; border-radius: 18px; border: none; font-family: 'Tajawal'; font-weight: bold; margin-bottom: 12px; font-size: 1rem; }
-        .btn-danger { background: var(--pink); color: #fff; }
-        .btn-cancel { background: #3a3a3c; color: #fff; }
+        .top-nav { display: flex; justify-content: space-between; align-items: center; padding: clamp(60px, 12vh, 85px) 25px 30px; }
+        .widget { width: 33%; background: var(--ios-gray); padding: 14px; border-radius: 22px; border: 1px solid rgba(255,255,255,0.05); }
+        .widget-label { font-size: 0.65rem; color: #8e8e93; font-weight: 900; display: block; margin-bottom: 2px; }
+        .widget-val { font-size: 1.3rem; font-weight: 800; color: var(--accent); letter-spacing: -0.5px; }
 
-        /* Tasks Area */
-        .tasks-list { flex: 1; overflow-y: auto; }
-        .input-group { display: flex; gap: 12px; background: var(--card); padding: 12px; border-radius: 20px; border: 1px solid #222; margin-bottom: 20px; }
-        .ios-input { flex: 1; background: transparent; border: none; color: #fff; font-family: 'Tajawal'; outline: none; font-size: 1rem; }
-        
-        .task-card { background: var(--card); padding: 18px; border-radius: 22px; display: flex; align-items: center; justify-content: space-between; border: 1px solid #1a1a1a; margin-bottom: 12px; animation: fadeIn 0.3s ease; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .check-btn { width: 32px; height: 32px; border: 2px solid #333; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
-        .check-btn.done { background: var(--accent); border-color: var(--accent); color: #000; }
+        .main-container { flex: 1; display: flex; flex-direction: column; padding: 0 25px env(safe-area-inset-bottom); }
 
-        /* Timer Area */
-        .timer-container { padding: 25px 0; text-align: center; }
-        .timer-text { font-size: 8rem; font-weight: 900; letter-spacing: -5px; line-height: 1; text-shadow: 0 0 20px rgba(0,243,255,0.2); }
+        .input-wrapper { background: var(--ios-gray); padding: 18px; border-radius: 22px; display: flex; align-items: center; gap: 15px; margin-bottom: 20px; border: 1px solid rgba(255,255,255,0.03); }
+        .input-wrapper input { flex: 1; background: transparent; border: none; color: #fff; font-size: 1.1rem; outline: none; font-weight: 500; }
+        .input-wrapper input::placeholder { color: #636366; }
 
-        /* Controls */
-        .controls { display: grid; grid-template-columns: 1fr 75px; gap: 15px; padding-bottom: 10px; }
-        .btn { height: 75px; border-radius: 25px; border: none; font-family: 'Tajawal'; font-weight: 900; font-size: 1.3rem; cursor: pointer; transition: 0.2s; }
-        .btn-main { background: #fff; color: #000; }
-        .btn-main.active-mode { background: var(--pink); color: #fff; }
-        .btn-reset { background: var(--card); color: #fff; border: 1px solid #222; }
+        .task-scroll { flex: 1; overflow-y: auto; padding-right: 5px; }
+        .task-card { background: var(--ios-gray); padding: 20px; border-radius: 22px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; transition: 0.3s; }
+        .task-card.done { opacity: 0.25; transform: scale(0.98); }
+        .task-card.done span { text-decoration: line-through; }
+        .check-icon { width: 28px; height: 28px; border: 2.5px solid #3a3a3c; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
+        .check-icon.active { background: var(--accent); border-color: var(--accent); color: #000; }
 
-        .version-tag { text-align: center; font-size: 0.65rem; color: #333; padding-bottom: 15px; font-family: 'Tajawal'; letter-spacing: 2px; }
+        .timer-box { text-align: center; margin-top: auto; padding-bottom: 20px; }
+        .time-val { font-size: var(--timer-fs); font-weight: 200; letter-spacing: -7px; font-variant-numeric: tabular-nums; }
+
+        .footer-rights { text-align: center; font-size: 0.8rem; padding: 15px 0; font-weight: 700; color: #444; }
+        .footer-rights a { color: var(--accent); text-decoration: none; }
+
+        .action-row { display: grid; grid-template-columns: 1fr 75px; gap: 15px; padding-bottom: 45px; }
+        .btn { height: 72px; border-radius: 24px; border: none; font-weight: 900; font-size: 1.4rem; transition: 0.2s; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+        .btn:active { transform: scale(0.95); opacity: 0.8; }
+        .btn-play { background: #fff; color: #000; }
+        .btn-play.active { background: var(--pink); color: #fff; }
+        .btn-off { background: var(--ios-gray); color: #fff; font-size: 1.6rem; }
+
+        /* iPhone Toast Notification */
+        .toast { position: fixed; top: -120px; left: 20px; right: 20px; background: rgba(28, 28, 30, 0.95); backdrop-filter: blur(30px); padding: 22px; border-radius: 28px; z-index: 1000000; display: flex; align-items: center; gap: 18px; transition: 0.7s cubic-bezier(0.19, 1, 0.22, 1); border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .toast.show { top: 65px; }
     </style>
 </head>
-<body oncontextmenu="return false;">
+<body>
 
-    <div class="smart-alert" id="alertBox">
-        <i id="alertIcon" class="fas fa-ghost" style="color: var(--accent); font-size: 1.4rem;"></i>
-        <span id="alertMsg" style="font-family: 'Tajawal'; font-size: 0.85rem; font-weight: bold;"></span>
-    </div>
-
-    <div class="action-sheet-overlay" id="sheetOverlay">
-        <div class="action-sheet">
-            <h3 style="font-family:'Tajawal'; text-align:center; margin-bottom:20px; font-size: 1.1rem;">إعادة تصفير نظام وتين؟ 😭</h3>
-            <button class="sheet-btn btn-danger" onclick="confirmReset()">تأكيد المسح الشامل</button>
-            <button class="sheet-btn btn-cancel" onclick="closeSheet()">إلغاء الرجوع</button>
-        </div>
-    </div>
-
-    <div class="app-shell">
-        <header class="brand-header">
-            <img src="https://iili.io/fkhg119.jpg" alt="Wateen" class="user-img">
-            <h1>WATEEN <span style="color:var(--accent)">OS</span></h1>
-        </header>
-        <div class="slogan-text">نظام النصب الدراسي المطور 🌚</div>
-
-        <div class="tasks-list">
-            <div class="input-group">
-                <input type="text" id="tInput" class="ios-input" placeholder="اكتبي هدف العملية الجديد...">
-                <button onclick="addTask()" style="background:transparent; border:none; color:var(--accent); font-size: 1.6rem;"><i class="fas fa-plus-circle"></i></button>
+    <div id="splash">
+        <div class="splash-card">
+            <img src="https://iili.io/fkhg119.jpg" class="splash-logo">
+            <h1 style="font-size: 2.2rem; font-weight: 900; margin-bottom: 15px; letter-spacing: -1px;">WATEEN OS</h1>
+            <div style="font-size: 1rem; line-height: 1.8; color: #8e8e93; font-weight: 500;">
+                تم تصميم هذا التطبيق من الصفر وباعتماد ذاتي بواسطة المبرمجة <span class="m-name">مروة محمد</span>. نظام ذكي يعتمد تقنية 40 دقيقة دراسة + 10 دقائق استراحة.
+                <br><br>
+                يساعدك على إنجاز 8 ساعات دراسة فعّالة يومياً.
+                <br><br>
+                <span id="greetText" style="color:#fff; font-weight:800;"></span>
             </div>
-            <div id="tList"></div>
+            <div class="loading-bar"><div class="loading-fill"></div></div>
+        </div>
+    </div>
+
+    <div id="ios-modal">
+        <div class="modal-content">
+            <h3 style="color:#fff; margin-bottom:8px">إعادة الضبط</h3>
+            <p style="color:#8e8e93; font-size:0.95rem">هل أنتِ متأكدة من مسح كل السجلات يا مروة؟</p>
+            <div class="modal-btns">
+                <button class="m-btn m-btn-reset" onclick="appReset()">تأكيد المسح</button>
+                <button class="m-btn" onclick="closeModal()">إلغاء</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast">
+        <div style="width:45px; height:45px; background:var(--accent); border-radius:14px; display:flex; align-items:center; justify-content:center; color:#000;">
+            <i class="fas fa-comment-dots" style="font-size:1.3rem"></i>
+        </div>
+        <span id="toastMsg" style="font-weight:700; font-size:1rem; line-height:1.4"></span>
+    </div>
+
+    <div class="top-nav">
+        <div class="widget"><span class="widget-label">REST SESS</span><span class="widget-val" id="rc">0/12</span></div>
+        <div style="text-align:center">
+            <img src="https://iili.io/fkhg119.jpg" style="width:55px; height:55px; border-radius:50%; border:2.5px solid var(--accent)">
+            <p style="font-size:0.65rem; font-weight:900; margin-top:6px; color:#8e8e93; letter-spacing: 1px;">WATEEN PRO</p>
+        </div>
+        <div class="widget" style="text-align:left"><span class="widget-label">STUDY SESS</span><span class="widget-val" id="sc">0/12</span></div>
+    </div>
+
+    <div class="main-container">
+        <div class="task-scroll">
+            <div class="input-wrapper">
+                <input type="text" id="taskInp" placeholder="اكتبي هدف العملية الجديد...">
+                <i class="fas fa-plus-circle" style="color:var(--accent); font-size:1.8rem" onclick="addTask()"></i>
+            </div>
+            <div id="taskList"></div>
         </div>
 
-        <div class="timer-container">
-            <div class="timer-text" id="tDisplay">40:00</div>
+        <div class="footer-rights">
+            تم التطوير بواسطة <span class="m-name">مروة محمد</span> | 
+            <a href="https://t.me/wateenPRO" target="_blank">@wateenPRO</a>
         </div>
 
-        <div class="controls">
-            <button class="btn btn-main" id="startBtn" onclick="handleTimer()">بدء النصب</button>
-            <button class="btn btn-reset" onclick="openSheet()"><i class="fas fa-power-off"></i></button>
+        <div class="timer-box">
+            <div class="time-val" id="timeDisp">40:00</div>
         </div>
 
-        <div class="version-tag">VERSION 1.1 GOLD • BY WATEEN</div>
+        <div class="action-row">
+            <button class="btn btn-play" id="mainBtn" onclick="toggleTimer()">بدء التنفيذ</button>
+            <button class="btn btn-off" onclick="openModal()"><i class="fas fa-power-off"></i></button>
+        </div>
     </div>
 
     <script>
+        // إرجاع قائمة النصائح كاملة
+        const phrases = [
+            "ترا الوزاري ميرحم، ركز يا بطل! 🧠", "عوف الموبايل، ترا مارك ميفيدك بالنتائج 🌚", "الدماغ يحتاج فرمتة دراسية، ابدأ الآن! 🚀",
+            "عبالك ما أدري بيك صافن؟ ركز! 😂", "الكتب دا تبجي من قلة التركيز 📖", "كل ثانية نوم هسه، تقابلها حسرة باجر! 🤣",
+            "يا مخ، بطل تفكر بالعشاء وركز بالهدف! 🍔", "الإنجاز طعمه أطيب من الكنافة! 🍰", "ترا والله هانت، بس ركز شوية! 🩺",
+            "يا مخ، أنت كدها.. بس بطل عجز! 🧠", "خلوكم فخر لنفسكم ولأهلكم! 👨‍👩‍👧‍👦", "ترا الفيزياء دا تغمز لنا، ركزوا! 😉",
+            "الكيمياء دا تطبخ مفاجآت بالوزاري! 🧪", "اللغة العربية بحر وإحنا دا نغرق بالكسل! 🌊",
+            "النجاح يحب اللي يتعب له! 🏆", "يا مخ، أنت المحرك.. لا تعطل! ⚙️", "الفرحة بالنهاية تنسينا كل التعب! 🥳",
+            "ترا إحنا كدها وقدود، لا تتراجع! 💪", "يلا جولة جديدة، بدون صفنات فارغة! 🚀", "المستقبل ينتظرنا، خل نكون مستعدين! 🌟",
+            "الالتزام هو جسر النجاح، اعبره الآن! 🌉", "تخيل اسمك بلوحة الشرف، واشتغل! ✨", "الكسل هو عدوك الأول، اهزمه! ⚔️",
+            "يا مخ، فكر بالصدرية وعوف المسلسلات! 🥼", "الهدف واضح، لا تشتت نفسك! 🎯", "يا شعب وتين، الانضباط هو السر! 🔐",
+            "عوفوا السوالف، ترا ماكو وقت للندم! ⌛", "ركزوا، ترا العقل دا يغش من التعب! 🧠", "يا مخ، أنت أذكى من هيج، أثبت لنا! 🧠",
+            "يلا جولة أخيرة بقمة التركيز! 🔥", "كل ثانية تعب هسه، راحة باجر! 🛌", "يا جماعة، ترا والله هانت! ✨"
+        ];
+
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        function playSfx(freq, type='short') {
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain); gain.connect(audioCtx.destination);
+            osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+            if(type==='done') osc.frequency.exponentialRampToValueAtTime(freq+500, audioCtx.currentTime + 0.1);
+            gain.gain.setValueAtTime(0.03, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.2);
+            osc.start(); osc.stop(audioCtx.currentTime + 0.2);
+        }
+
         let timeLeft = 40 * 60;
         let timer = null;
         let isRunning = false;
-        let tasks = JSON.parse(localStorage.getItem('wateen_final_v1')) || [];
+        let studyCount = 0;
+        let tasks = JSON.parse(localStorage.getItem('wateen_pro_v77')) || [];
 
-        const roasts = [
-            "وتين، عقلك ينصب عليج هسه! 😂", "الوزاري يباوع ويقول: خوش تمثيلية 🤣", "ممنوع الغش، النظام يراقب 🌚",
-            "ميوووانت! ركزي لا نغير النغمة 🐈", "الساعة واقفة؟ لا انتي الواقفة 😂", "تدرين كتاب الفيزياء دا يبجي عليج؟ 😭",
-            "خطة النصب فاشلة، ارجعي اقري 😏", "هسه لو طالعة وية صديقاتج مو أحسن؟ 😂", "يا مبرمجة، صلحتي الكود بس مصلحتي جدولج 😂",
-            "وتين البطلة (في عالم النصب فقط) 🤣", "ركزي مروة، السادس ميرحم 😏", "ترا أعرف جاي تفكرين بالعشاء.. ركزي! 🍔"
-        ];
+        const h = new Date().getHours();
+        document.getElementById('greetText').innerText = h < 12 ? "طاب نهاركم… ووقت الإبداع ✨" : "طاب يومكم… ووقت الإبداع ✨";
+        
+        setTimeout(() => { 
+            document.getElementById('splash').style.opacity='0'; 
+            setTimeout(()=>document.getElementById('splash').style.display='none',1200); 
+        }, 10000);
 
-        window.onload = () => { render(); updateUI(); };
+        window.onload = () => { renderTasks(); updateUI(); };
 
-        function playSound(freq, type = 'sine', duration = 0.1, vol = 0.1) {
-            const osc = audioCtx.createOscillator(); const g = audioCtx.createGain();
-            osc.type = type; osc.frequency.value = freq; osc.connect(g); g.connect(audioCtx.destination);
-            g.gain.setValueAtTime(vol, audioCtx.currentTime);
-            osc.start(); g.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
-            osc.stop(audioCtx.currentTime + duration);
+        function triggerToast(m) {
+            document.getElementById('toastMsg').innerText = m;
+            document.getElementById('toast').classList.add('show');
+            setTimeout(()=>document.getElementById('toast').classList.remove('show'), 4000);
         }
+
+        function addTask() {
+            const inp = document.getElementById('taskInp');
+            if(inp.value.trim()){
+                tasks.push({id: Date.now(), text: inp.value.trim(), done: false});
+                inp.value = ''; playSfx(800); sync();
+                triggerToast(phrases[Math.floor(Math.random()*phrases.length)]);
+            }
+        }
+
+        function sync() { localStorage.setItem('wateen_pro_v77', JSON.stringify(tasks)); renderTasks(); }
+
+        function renderTasks() {
+            document.getElementById('taskList').innerHTML = tasks.map(t => `
+                <div class="task-card ${t.done?'done':''}">
+                    <span>${t.text}</span>
+                    <div class="check-icon ${t.done?'active':''}" onclick="checkTask(${t.id})">
+                        <i class="fas fa-check" style="font-size:0.75rem"></i>
+                    </div>
+                </div>`).join('');
+        }
+
+        function checkTask(id) {
+            if(isRunning) { triggerToast("ركز بالدراسة هسة وعوف المهام! 🌚"); return; }
+            tasks = tasks.map(t => {
+                if(t.id === id) {
+                    if(!t.done) playSfx(1000, 'done'); else playSfx(600);
+                    return {...t, done: !t.done};
+                }
+                return t;
+            });
+            sync();
+        }
+
+        function updateUI() {
+            const m = Math.floor(timeLeft/60); const s = timeLeft%60;
+            document.getElementById('timeDisp').innerText = `${m}:${s<10?'0':''}${s}`;
+        }
+
+        function toggleTimer() {
+            playSfx(700);
+            if(tasks.length === 0) { triggerToast("أضف أهدافك أولاً قبل البدء! 🌚"); return; }
+            const btn = document.getElementById('mainBtn');
+            if(isRunning) {
+                clearInterval(timer); isRunning = false;
+                btn.innerText = "استئناف التنفيذ"; btn.classList.remove('active');
+                triggerToast("عبالك ما أدري بيك؟ تره مراقبك! 👁️ لا تسخت!");
+            } else {
+                isRunning = true;
+                btn.innerText = "توقف مؤقت"; btn.classList.add('active');
+                triggerToast(phrases[Math.floor(Math.random()*phrases.length)]);
+                timer = setInterval(() => {
+                    timeLeft--; updateUI();
+                    if(timeLeft <= 0) {
+                        clearInterval(timer); isRunning = false;
+                        studyCount++; document.getElementById('sc').innerText = `${studyCount}/12`;
+                        playSfx(1500, 'done');
+                        triggerToast("كفووو! جولة كاملة بنجاح 🥳");
+                    }
+                }, 1000);
+            }
+        }
+
+        // إرجاع وظائف الـ Modal وإعادة الضبط المصلحة
+        function openModal() { playSfx(400); document.getElementById('ios-modal').style.display = 'flex'; }
+        function closeModal() { document.getElementById('ios-modal').style.display = 'none'; }
+        
+        function appReset() {
+            playSfx(200);
+            localStorage.clear();
+            tasks = [];
+            studyCount = 0;
+            timeLeft = 40 * 60;
+            document.getElementById('sc').innerText = "0/12";
+            document.getElementById('rc').innerText = "0/12";
+            document.getElementById('timeDisp').innerText = "40:00";
+            sync();
+            closeModal();
+            triggerToast("تم تصفير كل شيء بنجاح! 🚀");
+        }
+    </script>
+</body>
+</html>
 
         function showAlert(msg, iconClass = 'fa-ghost') {
             const box = document.getElementById('alertBox');
