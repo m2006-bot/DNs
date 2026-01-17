@@ -1,6 +1,5 @@
 const CACHE_NAME = 'wateen-v1-cache';
 const urlsToCache = [
-  '/',
   'index.html',
   'https://iili.io/fkhg119.jpg',
   'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css',
