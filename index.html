@@ -3,17 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Wateen OS Elite - 2026</title>
+    <title>Wateen OS Elite</title>
     
     <link rel="manifest" href="manifest.json">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Wateen OS">
     <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="theme-color" content="#000000">
-    
-    <link rel="apple-touch-icon" href="https://iili.io/fkhg119.jpg">
-    <link rel="icon" href="https://iili.io/fkhg119.jpg">
 
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;500;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -25,55 +20,22 @@
             --accent: #00f3ff;
             --gold: #ffd700;
             --pink: #ff2d55;
-            --safe-top: env(safe-area-inset-top);
-            --safe-bottom: env(safe-area-inset-bottom);
         }
 
-        * { 
-            box-sizing: border-box; 
-            margin: 0; padding: 0; 
-            -webkit-user-select: none; user-select: none;
-            -webkit-touch-callout: none; -webkit-tap-highlight-color: transparent;
-            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Tajawal", sans-serif;
-        }
-
-        /* منع التمرير في الصفحة الرئيسية لضمان شعور التطبيق الأصلي */
+        /* الحل النهائي للأندرويد كما طلبتِ */
         html, body {
-            height: 100%;
-            overflow: hidden;
-            background-color: #000;
+            margin: 0; padding: 0;
+            width: 100%; height: 100%;
+            overflow: hidden; background: #000;
+            font-family: "Tajawal", sans-serif;
         }
 
-        body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        /* حاوية التطبيق الرئيسية لضبط قياسات الهاتف والآيباد */
-        .app-shell {
-            width: 100%;
-            max-width: 430px; /* قياس آيفون Pro Max */
-            height: 100dvh;
-            background-color: var(--bg);
-            color: #fff;
+        #app {
+            position: fixed;
+            inset: 0; /* Fullscreen حقيقي */
             display: flex;
             flex-direction: column;
-            position: relative;
-            margin: auto;
-            border-left: 1px solid rgba(255,255,255,0.05);
-            border-right: 1px solid rgba(255,255,255,0.05);
-        }
-
-        /* تعديلات للآيباد */
-        @media (min-width: 768px) {
-            .app-shell {
-                max-width: 500px;
-                height: 95dvh;
-                border-radius: 40px;
-                border: 6px solid #1c1c1e;
-                box-shadow: 0 0 50px rgba(0,243,255,0.1);
-            }
+            color: #fff;
         }
 
         /* Splash Screen (10s) */
@@ -82,176 +44,116 @@
             display: flex; flex-direction: column; align-items: center; justify-content: center;
             padding: 35px; text-align: center; transition: 1.2s ease-in-out;
         }
-        .splash-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); padding: 30px; border-radius: 32px; max-width: 450px; }
-        .splash-logo { width: 85px; height: 85px; border-radius: 22px; border: 2px solid var(--accent); margin-bottom: 20px; box-shadow: 0 0 20px rgba(0,243,255,0.2); }
-        .m-name { color: var(--gold); font-weight: 900; text-shadow: 0 0 10px rgba(255, 215, 0, 0.4); }
+        .splash-logo { width: 90px; height: 90px; border-radius: 22px; border: 2px solid var(--accent); margin-bottom: 20px; }
+        .m-name { color: var(--gold); font-weight: 900; }
         .loading-bar { width: 100%; height: 4px; background: #222; border-radius: 10px; margin-top: 25px; overflow: hidden; }
         .loading-fill { width: 0%; height: 100%; background: var(--accent); animation: load 10s linear forwards; }
         @keyframes load { to { width: 100%; } }
 
-        /* Custom iOS Modal */
-        #ios-modal {
-            position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(15px);
-            z-index: 2000000; display: none; align-items: center; justify-content: center; padding: 25px;
-        }
-        .modal-content {
-            background: #1c1c1e; width: 100%; max-width: 280px; border-radius: 20px;
-            padding: 20px; text-align: center; border: 1px solid rgba(255,255,255,0.1);
-        }
-        .modal-btns { display: flex; flex-direction: column; gap: 1px; background: #3a3a3c; margin-top: 20px; border-radius: 12px; overflow: hidden; }
-        .m-btn { padding: 15px; border: none; font-size: 1.1rem; background: #1c1c1e; color: #0a84ff; cursor: pointer; font-weight: 500; outline: none; }
-        .m-btn-reset { color: #ff453a; font-weight: 700; border-bottom: 1px solid #3a3a3c; }
-
-        .top-nav { 
-            display: flex; justify-content: space-between; align-items: center; 
-            padding: calc(var(--safe-top) + 20px) 25px 20px; 
-        }
+        /* Widgets */
+        .top-nav { display: flex; justify-content: space-between; align-items: center; padding: 50px 25px 20px; }
         .widget { width: 32%; background: var(--ios-gray); padding: 12px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.05); }
-        .widget-label { font-size: 0.6rem; color: #8e8e93; font-weight: 900; display: block; margin-bottom: 2px; }
+        .widget-label { font-size: 0.6rem; color: #8e8e93; font-weight: 900; display: block; }
         .widget-val { font-size: 1.1rem; font-weight: 800; color: var(--accent); }
 
+        /* Tasks Area */
         .main-container { flex: 1; display: flex; flex-direction: column; padding: 0 25px; overflow: hidden; }
-
         .input-wrapper { background: var(--ios-gray); padding: 15px; border-radius: 20px; display: flex; align-items: center; gap: 12px; margin-bottom: 15px; }
-        .input-wrapper input { flex: 1; background: transparent; border: none; color: #fff; font-size: 1rem; outline: none; }
-
-        .task-scroll { flex: 1; overflow-y: auto; padding-bottom: 20px; }
-        /* تحسين مظهر السكرول بار */
-        .task-scroll::-webkit-scrollbar { width: 0px; }
-
+        .input-wrapper input { flex: 1; background: transparent; border: none; color: #fff; outline: none; }
+        .task-scroll { flex: 1; overflow-y: auto; }
         .task-card { background: var(--ios-gray); padding: 18px; border-radius: 20px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
-        .task-card.done { opacity: 0.3; }
+        .task-card.done { opacity: 0.3; text-decoration: line-through; }
 
-        .timer-box { text-align: center; padding: 10px 0; }
-        .time-val { font-size: clamp(5rem, 15vw, 8rem); font-weight: 200; letter-spacing: -5px; font-variant-numeric: tabular-nums; }
+        /* Timer UI */
+        .timer-box { text-align: center; padding: 20px 0; }
+        .time-val { font-size: 6rem; font-weight: 200; letter-spacing: -5px; font-variant-numeric: tabular-nums; }
 
-        .action-row { 
-            display: grid; grid-template-columns: 1fr 70px; gap: 15px; 
-            padding: 10px 25px calc(var(--safe-bottom) + 20px); 
-        }
-        .btn { height: 65px; border-radius: 22px; border: none; font-weight: 900; font-size: 1.2rem; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+        /* Footer & Buttons */
+        .footer { margin-bottom: 30px; padding: 0 25px; }
+        .action-row { display: grid; grid-template-columns: 1fr 70px; gap: 15px; }
+        .btn { height: 65px; border-radius: 22px; border: none; font-weight: 900; font-size: 1.2rem; cursor: pointer; display: flex; align-items: center; justify-content: center; }
         .btn-play { background: #fff; color: #000; }
         .btn-play.active { background: var(--pink); color: #fff; }
         .btn-off { background: var(--ios-gray); color: #fff; }
 
-        .toast { position: fixed; top: -120px; left: 20px; right: 20px; background: rgba(28, 28, 30, 0.95); backdrop-filter: blur(30px); padding: 20px; border-radius: 24px; z-index: 1000000; display: flex; align-items: center; gap: 15px; transition: 0.6s cubic-bezier(0.19, 1, 0.22, 1); border: 1px solid rgba(255,255,255,0.1); }
-        .toast.show { top: calc(var(--safe-top) + 10px); }
+        /* Toast */
+        .toast { position: fixed; top: -100px; left: 20px; right: 20px; background: #1c1c1e; padding: 20px; border-radius: 20px; z-index: 1000000; transition: 0.6s; border: 1px solid rgba(255,255,255,0.1); }
+        .toast.show { top: 40px; }
     </style>
 </head>
 <body>
 
     <div id="splash">
-        <div class="splash-card">
-            <img src="https://iili.io/fkhg119.jpg" class="splash-logo">
-            <h1 style="font-size: 2rem; font-weight: 900; margin-bottom: 10px;">WATEEN OS</h1>
-            <div style="font-size: 0.9rem; line-height: 1.6; color: #8e8e93;">
-                بواسطة المبرمجة <span class="m-name">مروة محمد</span>
-                <br> نظام 40/10 لإنجاز 8 ساعات دراسة.
-                <br><br>
-                <span id="greetText" style="color:#fff; font-weight:800;"></span>
-            </div>
-            <div class="loading-bar"><div class="loading-fill"></div></div>
-        </div>
+        <img src="https://iili.io/fkhg119.jpg" class="splash-logo">
+        <h1 style="color:white; margin-bottom:10px;">WATEEN OS</h1>
+        <p style="color:#8e8e93;">المبرمجة <span class="m-name">مروة محمد</span></p>
+        <div class="loading-bar"><div class="loading-fill"></div></div>
     </div>
 
-    <div class="app-shell">
-        <div id="ios-modal">
-            <div class="modal-content">
-                <h3 style="color:#fff; margin-bottom:8px">إعادة الضبط</h3>
-                <p style="color:#8e8e93; font-size:0.9rem">هل أنتِ متأكدة يا مروة؟</p>
-                <div class="modal-btns">
-                    <button class="m-btn m-btn-reset" onclick="appReset()">تأكيد المسح</button>
-                    <button class="m-btn" onclick="closeModal()">إلغاء</button>
-                </div>
-            </div>
-        </div>
-
-        <div class="toast" id="toast">
-            <div style="width:40px; height:40px; background:var(--accent); border-radius:12px; display:flex; align-items:center; justify-content:center; color:#000;">
-                <i class="fas fa-bell"></i>
-            </div>
-            <span id="toastMsg" style="font-weight:700; font-size:0.9rem"></span>
-        </div>
+    <div id="app">
+        <div class="toast" id="toast"><span id="toastMsg"></span></div>
 
         <div class="top-nav">
-            <div class="widget"><span class="widget-label">REST SESS</span><span class="widget-val" id="rc">0/12</span></div>
-            <div style="text-align:center">
-                <img src="https://iili.io/fkhg119.jpg" style="width:50px; height:50px; border-radius:50%; border:2px solid var(--accent)">
-            </div>
-            <div class="widget" style="text-align:left"><span class="widget-label">STUDY SESS</span><span class="widget-val" id="sc">0/12</span></div>
+            <div class="widget"><span class="widget-label">REST</span><span class="widget-val" id="rc">0/12</span></div>
+            <div style="text-align:center"><img src="https://iili.io/fkhg119.jpg" style="width:50px; border-radius:50%; border:2px solid var(--accent)"></div>
+            <div class="widget" style="text-align:left"><span class="widget-label">STUDY</span><span class="widget-val" id="sc">0/12</span></div>
         </div>
 
         <div class="main-container">
             <div class="input-wrapper">
-                <input type="text" id="taskInp" placeholder="اكتبي هدف العملية الجديد...">
+                <input type="text" id="taskInp" placeholder="هدفك القادم يا مروة؟">
                 <i class="fas fa-plus-circle" style="color:var(--accent); font-size:1.6rem" onclick="addTask()"></i>
             </div>
-            
             <div class="task-scroll" id="taskList"></div>
-
-            <div class="timer-box">
-                <div class="time-val" id="timeDisp">40:00</div>
-            </div>
+            <div class="timer-box"><div class="time-val" id="timeDisp">40:00</div></div>
         </div>
 
-        <div class="action-row">
-            <button class="btn btn-play" id="mainBtn" onclick="toggleTimer()">بدء التنفيذ</button>
-            <button class="btn btn-off" onclick="openModal()"><i class="fas fa-power-off"></i></button>
+        <div class="footer">
+            <div class="action-row">
+                <button class="btn btn-play" id="mainBtn" onclick="toggleTimer()">بدء التنفيذ</button>
+                <button class="btn btn-off" onclick="appReset()"><i class="fas fa-redo"></i></button>
+            </div>
         </div>
     </div>
 
     <script>
-        // --- 1. طلب أذونات الإشعارات عند التشغيل ---
-        if ("Notification" in window) {
-            Notification.requestPermission();
-        }
+        // 1. تفعيل Fullscreen عند التفاعل (حل الأندرويد)
+        document.addEventListener('click', () => {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(e => console.log(e));
+            }
+        }, { once: true });
 
-        // --- 2. تسجيل الـ Service Worker (يجب توفر ملف sw.js بجانبه) ---
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('sw.js').catch(() => {});
-        }
+        // 2. طلب إذن الإشعارات للظهار في شريط الهاتف
+        if ("Notification" in window) { Notification.requestPermission(); }
 
-        const phrases = [
-            "ترا الوزاري ميرحم، ركز يا بطل! 🧠", "عوف الموبايل، ركز بالدراسة 🌚", 
-            "عبالك ما أدري بيك صافن؟ 😂", "النجاح يحب اللي يتعب له! 🏆", 
-            "يا مخ، أنت كدها.. بس بطل عجز! 🧠", "يا مروة، الصدرية تنتظرج! 🥼"
-        ];
-
+        const phrases = ["ركزي يا بطلة مروة! 🧠", "الصدرية تنتظرج.. لا تستسلمين! 🥼", "عوفوا الموبايل، ترا الوزاري ميرحم! 🌚"];
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        function playSfx(freq, type='short') {
-            try {
-                const osc = audioCtx.createOscillator();
-                const gain = audioCtx.createGain();
-                osc.connect(gain); gain.connect(audioCtx.destination);
-                osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-                gain.gain.setValueAtTime(0.02, audioCtx.currentTime);
-                osc.start(); osc.stop(audioCtx.currentTime + 0.1);
-            } catch(e) {}
+
+        function playSound(freq, duration) {
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain); gain.connect(audioCtx.destination);
+            osc.frequency.value = freq;
+            gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+            osc.start(); osc.stop(audioCtx.currentTime + duration);
         }
 
         let timeLeft = 40 * 60;
         let timer = null;
         let isRunning = false;
-        let studyCount = 0;
-        let tasks = JSON.parse(localStorage.getItem('wateen_pro_v2026')) || [];
+        let tasks = JSON.parse(localStorage.getItem('wateen_android_v1')) || [];
 
-        const h = new Date().getHours();
-        document.getElementById('greetText').innerText = h < 12 ? "طاب نهاركِ مروة… وقت الإبداع ✨" : "طاب يومكِ مروة… وقت الإبداع ✨";
-        
-        setTimeout(() => { 
-            document.getElementById('splash').style.opacity='0'; 
-            setTimeout(()=>document.getElementById('splash').style.display='none',1200); 
-        }, 10000);
-
-        window.onload = () => { renderTasks(); updateUI(); };
+        setTimeout(() => { document.getElementById('splash').style.display='none'; }, 10000);
 
         function triggerToast(m) {
             document.getElementById('toastMsg').innerText = m;
             document.getElementById('toast').classList.add('show');
-            setTimeout(()=>document.getElementById('toast').classList.remove('show'), 4000);
+            setTimeout(() => document.getElementById('toast').classList.remove('show'), 3000);
             
+            // إظهار في شريط الهاتف
             if (Notification.permission === "granted") {
-                new Notification("Wateen OS", { body: m, icon: "https://iili.io/fkhg119.jpg" });
+                new Notification("Wateen OS", { body: m, icon: "https://iili.io/fkhg119.jpg", tag: "timer-info" });
             }
         }
 
@@ -259,62 +161,59 @@
             const inp = document.getElementById('taskInp');
             if(inp.value.trim()){
                 tasks.push({id: Date.now(), text: inp.value.trim(), done: false});
-                inp.value = ''; playSfx(800); sync();
+                inp.value = ''; playSound(800, 0.1); sync();
             }
         }
 
-        function sync() { localStorage.setItem('wateen_pro_v2026', JSON.stringify(tasks)); renderTasks(); }
+        function sync() { localStorage.setItem('wateen_android_v1', JSON.stringify(tasks)); renderTasks(); }
 
         function renderTasks() {
             document.getElementById('taskList').innerHTML = tasks.map(t => `
-                <div class="task-card ${t.done?'done':''}">
-                    <span style="font-size: 0.95rem; font-weight:500;">${t.text}</span>
-                    <div style="color: ${t.done?'var(--accent)':'#3a3a3c'}" onclick="checkTask(${t.id})">
-                        <i class="fas ${t.done?'fa-check-circle':'fa-circle'}" style="font-size:1.4rem"></i>
-                    </div>
+                <div class="task-card ${t.done?'done':''}" onclick="checkTask(${t.id})">
+                    <span>${t.text}</span>
+                    <i class="fas ${t.done?'fa-check-circle':'fa-circle'}" style="color:var(--accent)"></i>
                 </div>`).join('');
         }
 
         function checkTask(id) {
             tasks = tasks.map(t => t.id === id ? {...t, done: !t.done} : t);
-            sync(); playSfx(600);
-        }
-
-        function updateUI() {
-            const m = Math.floor(timeLeft/60); const s = timeLeft%60;
-            document.getElementById('timeDisp').innerText = `${m}:${s<10?'0':''}${s}`;
+            sync(); playSound(600, 0.1);
         }
 
         function toggleTimer() {
-            if(tasks.length === 0) { triggerToast("أضف أهدافك أولاً! 🌚"); return; }
+            playSound(1000, 0.05);
             const btn = document.getElementById('mainBtn');
             if(isRunning) {
                 clearInterval(timer); isRunning = false;
                 btn.innerText = "استئناف"; btn.classList.remove('active');
             } else {
                 isRunning = true;
-                btn.innerText = "توقف"; btn.classList.add('active');
+                btn.innerText = "توقف مؤقت"; btn.classList.add('active');
                 triggerToast(phrases[Math.floor(Math.random()*phrases.length)]);
                 timer = setInterval(() => {
-                    timeLeft--; updateUI();
+                    timeLeft--;
+                    const m = Math.floor(timeLeft/60); const s = timeLeft%60;
+                    document.getElementById('timeDisp').innerText = `${m}:${s<10?'0':''}${s}`;
+                    
+                    // تحديث الإشعار في شريط الهاتف كل دقيقة
+                    if(s === 0) triggerToast(`متبقي ${m} دقيقة من التركيز..`);
+
                     if(timeLeft <= 0) {
                         clearInterval(timer); isRunning = false;
-                        studyCount++; document.getElementById('sc').innerText = `${studyCount}/12`;
-                        triggerToast("كفووو! اكتملت الجولة 🥳");
-                        playSfx(1000);
+                        playSound(1500, 0.5);
+                        triggerToast("كفووو يا مروة! جولة كاملة بنجاح 🥳");
                     }
                 }, 1000);
             }
         }
 
-        function openModal() { document.getElementById('ios-modal').style.display = 'flex'; }
-        function closeModal() { document.getElementById('ios-modal').style.display = 'none'; }
         function appReset() {
-            localStorage.clear(); tasks = []; studyCount = 0; timeLeft = 40 * 60;
-            document.getElementById('sc').innerText = "0/12";
-            updateUI(); sync(); closeModal();
-            triggerToast("تم تصفير النظام! 🚀");
+            if(confirm("تصفير السجلات؟")) {
+                localStorage.clear(); location.reload();
+            }
         }
+        
+        window.onload = renderTasks;
     </script>
 </body>
 </html>
