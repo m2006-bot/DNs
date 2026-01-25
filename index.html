@@ -2,179 +2,154 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>منصة التميز الدراسي</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>The Obsidian Gold UI</title>
     <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
         body {
-            background-color: #050505;
-            color: #ffffff;
-            font-family: 'Times New Roman', serif; /* خط كلاسيكي فخم */
-            margin: 0;
-            padding: 40px 20px;
-            display: flex;
-            justify-content: center;
+            background-color: #000;
+            color: #fff;
+            font-family: 'Arial Black', sans-serif;
+            min-height: 100vh;
+            padding-bottom: 100px;
         }
 
-        .main-container {
+        /* العنوان: شريط يتدرج من ذهبي عميق إلى أسود */
+        .header-bar {
             width: 100%;
-            max-width: 900px;
-        }
-
-        h1 {
-            text-align: center;
-            color: #d4af37;
-            font-size: 2.8em;
-            margin-bottom: 50px;
-            /* نص ممدود */
-            letter-spacing: 2px;
-            text-shadow: 0 0 15px rgba(212, 175, 55, 0.4);
-        }
-
-        .unit-section {
-            margin-bottom: 60px;
-        }
-
-        .unit-header {
-            color: #d4af37;
-            font-size: 1.8em;
-            font-weight: bold;
-            margin-bottom: 25px;
-            display: block;
-            border-bottom: 1px solid #d4af37;
-            width: fit-content;
-            padding-bottom: 5px;
-        }
-
-        .lesson-row {
+            height: 120px;
+            /* التدرج يبدأ ذهبي عميق وينتهي بأسود تماماً ليتلاشى */
+            background: linear-gradient(90deg, #6b5321 0%, #3d2f13 30%, #000 100%);
             display: flex;
             align-items: center;
-            background: #111;
-            margin-bottom: 20px;
-            padding: 22px 30px;
-            border-radius: 15px;
-            border: 1px solid #222;
-            cursor: pointer;
-            transition: all 0.4s ease;
+            padding: 0 8%;
+            margin-bottom: 40px;
+            border-bottom: 1px solid #222;
+        }
+
+        .header-bar h1 {
+            font-size: clamp(2rem, 8vw, 4rem);
+            color: #fff;
+            font-weight: 900;
+            letter-spacing: -1px;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            padding: 0 15px;
+        }
+
+        /* كتلة الدرس مع إطار خارجي ثابت */
+        .lesson-box {
             width: 100%;
-            box-sizing: border-box;
-            /* لمسة الظل الأخضر أسفل الدرس */
-            box-shadow: 0 8px 15px -10px rgba(0, 255, 127, 0.5);
-        }
-
-        .lesson-row:hover {
-            transform: translateY(-5px);
-            border-color: #00ff7f; /* تغيير الإطار للأخضر عند الحوم */
-            box-shadow: 0 10px 25px -5px rgba(0, 255, 127, 0.3);
-        }
-
-        .checkbox-wrapper {
-            margin-left: 25px;
+            height: 180px;
+            background: #080808;
+            /* إطار خارجي نحيف في البداية */
+            border: 2px solid #1a1a1a;
+            border-radius: 12px;
             display: flex;
             align-items: center;
-        }
-
-        input[type="checkbox"] {
-            width: 26px;
-            height: 26px;
+            padding: 0 40px;
             cursor: pointer;
-            accent-color: #00ff7f; /* لون المربع أخضر */
+            position: relative;
+            transition: 0.5s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        .lesson-text {
-            font-size: 1.3em;
-            color: #f0f0f0;
-            flex-grow: 1;
-            transition: 0.3s;
-            /* تطبيق مد النص */
-            letter-spacing: 1px; 
-            word-spacing: 3px;
+        input[type="checkbox"] { display: none; }
+
+        /* النص: ذهبي عريض جداً */
+        .subject-text {
+            font-size: clamp(1.8rem, 6vw, 3.5rem);
+            color: #d4af37; 
+            font-weight: 900;
+            transition: 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+            z-index: 2;
         }
 
-        /* تأثير الإنجاز */
-        input[type="checkbox"]:checked + .lesson-text {
-            text-decoration: line-through;
-            color: #444;
-            opacity: 0.5;
+        /* عند الإنجاز: النص يهفت ويصبح رمادي وينشطب */
+        input[type="checkbox"]:checked ~ .subject-text {
+            color: #222; /* رمادي خافت جداً */
+            text-decoration: line-through #333 5px;
+            transform: scale(0.97);
         }
 
-        /* الملاحظة الحمراء */
-        .note-red {
-            color: #ff3333;
-            font-size: 1em;
-            margin-top: 15px;
-            font-style: italic;
-            opacity: 0.9;
-            text-align: left;
+        /* تلوين الإطار الخارجي عند الإنجاز */
+        input[type="checkbox"]:checked ~ .lesson-box-border {
+            position: absolute;
+            inset: -2px;
+            border: 3px solid #00ff88; /* يلون الإطار بالزمردي */
+            border-radius: 12px;
+            box-shadow: 0 0 25px rgba(0, 255, 136, 0.2);
+            pointer-events: none;
+            z-index: 5;
         }
 
-        /* تنسيق ممدود خاص للنصوص */
-        .stretched-text {
-            display: inline-block;
+        /* رقم خلفي خافت */
+        .bg-num {
+            position: absolute;
+            left: 5%;
+            font-size: 8rem;
+            color: rgba(255, 255, 255, 0.01);
+            font-weight: 900;
+            z-index: 1;
         }
 
     </style>
 </head>
 <body>
 
-    <audio id="successSound" src="https://assets.mixkit.co/active_storage/sfx/2000/2000-preview.mp3"></audio>
-
-    <div class="main-container">
-        <h1>جــدول الــمــتــابــعــة الــدراســيــة</h1>
-
-        <div class="unit-section">
-            <span class="unit-header">الــوحــدة الأولــى</span>
-            <label class="lesson-row"><input type="checkbox" id="u1_1"><span class="lesson-text">الــدرس الأول : مــن الــقــرآن الــكــريــم مــن ســورة الــبــقــرة</span></label>
-            <label class="lesson-row"><input type="checkbox" id="u1_2"><span class="lesson-text">الــدرس الــثــالــث: مــن الــحــديــث الــنــبــوي الــشــريــف الــتــعــاون</span></label>
-            <label class="lesson-row"><input type="checkbox" id="u1_3"><span class="lesson-text">الــدرس الــرابع: أبــحــاث نــظــام الأســرة فــي الإســلام</span></label>
-            <label class="lesson-row"><input type="checkbox" id="u1_4"><span class="lesson-text">الــدرس الــخــامــس: الــتــهــذيــب الــنــهــي عــن الــغــضــب</span></label>
-            <p class="note-red">مــلاحــظــة: قــصــص تــم تــركــهــا لأن يــمــكــن تــركــهــا</p>
-        </div>
-
-        <div class="unit-section">
-            <span class="unit-header">الــوحــدة الــثــانــيــة</span>
-            <label class="lesson-row"><input type="checkbox" id="u2_1"><span class="lesson-text">الــدرس الأول : مــن الــقــرآن الــكــريــم مــن ســورة آل عــمــران</span></label>
-            <label class="lesson-row"><input type="checkbox" id="u2_2"><span class="lesson-text">الــدرس الــثــالــث: مــن الــحــديــث الــنــبــوي الــشــريــف الــنــاجــون</span></label>
-            <label class="lesson-row"><input type="checkbox" id="u2_3"><span class="lesson-text">الــدرس الــرابع: أبــحــاث حــقــوق الــزوجــيــن وواجــبــاتــهــمــا</span></label>
-            <label class="lesson-row"><input type="checkbox" id="u2_4"><span class="lesson-text">الــدرس الــخــامــس: الــتــهــذيــب قــصــص وعــبــر</span></label>
-            <p class="note-red">مــلاحــظــة: قــصــص تــم تــركــهــا لأن يــمــكــن تــركــهــا</p>
-        </div>
-
-        <div class="unit-section">
-            <span class="unit-header">الــوحــدة الــثــالــثــة</span>
-            <label class="lesson-row"><input type="checkbox" id="u3_1"><span class="lesson-text">الــدرس الأول مــن الــقــرآن الــكــريــم مــن ســورة الــنــســاء</span></label>
-            <label class="lesson-row"><input type="checkbox" id="u3_2"><span class="lesson-text">الــدرس الــثــالــث: مــن الــحــديــث الــنــبــوي الــشــريــف مــحــاســبــة الــنــفــس</span></label>
-            <label class="lesson-row"><input type="checkbox" id="u3_3"><span class="lesson-text">الــدرس الــرابع: أبــحــاث نــظــره عــامــة لــلــنــظــام الاقــتــصــادي</span></label>
-            <label class="lesson-row"><input type="checkbox" id="u3_4"><span class="lesson-text">الــدرس الــخــامــس: الــتــهــذيــب الــرجــولــة</span></label>
-            <p class="note-red">مــلاحــظــة: قــصــص تــم تــركــهــا لأن يــمــكــن تــركــهــا</p>
-        </div>
+    <div class="header-bar">
+        <h1>الأدب العربي.</h1>
     </div>
 
-    <script>
-        const checkboxes = document.querySelectorAll('input[type="checkbox"]');
-        const audio = document.getElementById('successSound');
+    <div class="container">
+        <script>
+            const subjects = [
+                "الأدب الـحـديـث", "مـدرسـة الإحـيـاء", "مـحـمـد سـعـيـد الـحـبـوبـي",
+                "عـلـي الـشـرقـي", "حـافـظ إبـراهـيـم", "الـجـواهـري",
+                "مـدرسـة الـمـهـجـر", "مـيـخـائـيـل نـعـمـه", "الـشـعـر الـحـر"
+            ];
 
-        // استعادة البيانات عند الفتح
-        window.onload = () => {
-            checkboxes.forEach(box => {
-                if (localStorage.getItem(box.id) === 'done') {
-                    box.checked = true;
-                }
+            subjects.forEach((name, i) => {
+                document.write(`
+                    <label class="lesson-box">
+                        <input type="checkbox" id="item${i}" onchange="bassHit(this)">
+                        <div class="lesson-box-border"></div>
+                        <span class="bg-num">${i + 1}</span>
+                        <span class="subject-text">${name}</span>
+                    </label>
+                `);
             });
-        };
 
-        // حفظ البيانات وتشغيل الصوت
-        checkboxes.forEach(box => {
-            box.addEventListener('change', () => {
-                if (box.checked) {
-                    localStorage.setItem(box.id, 'done');
-                    audio.currentTime = 0;
-                    audio.play();
+            function bassHit(el) {
+                if(el.checked) {
+                    localStorage.setItem(el.id, 'done');
+                    const ac = new AudioContext();
+                    const osc = ac.createOscillator();
+                    const gn = ac.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(55, ac.currentTime);
+                    gn.gain.setValueAtTime(0.3, ac.currentTime);
+                    gn.gain.exponentialRampToValueAtTime(0.001, ac.currentTime + 0.5);
+                    osc.connect(gn); gn.connect(ac.destination);
+                    osc.start(); osc.stop(ac.currentTime + 0.5);
                 } else {
-                    localStorage.removeItem(box.id);
+                    localStorage.removeItem(el.id);
                 }
-            });
-        });
-    </script>
+            }
+
+            window.onload = () => {
+                document.querySelectorAll('input').forEach(input => {
+                    if(localStorage.getItem(input.id)) input.checked = true;
+                });
+            }
+        </script>
+    </div>
 
 </body>
 </html>
