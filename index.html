@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>The Obsidian Gold UI</title>
+    <title>منصة الأدب الملكية</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 
@@ -12,49 +12,46 @@
             color: #fff;
             font-family: 'Arial Black', sans-serif;
             min-height: 100vh;
-            padding-bottom: 100px;
+            padding-bottom: 80px;
         }
 
-        /* العنوان: شريط يتدرج من ذهبي عميق إلى أسود */
+        /* العنوان: شريط ذهبي عميق يتلاشى للسواد التام */
         .header-bar {
             width: 100%;
-            height: 120px;
-            /* التدرج يبدأ ذهبي عميق وينتهي بأسود تماماً ليتلاشى */
-            background: linear-gradient(90deg, #6b5321 0%, #3d2f13 30%, #000 100%);
+            height: 110px;
+            background: linear-gradient(90deg, #4d3d18 0%, #1a1409 35%, #000 100%);
             display: flex;
             align-items: center;
             padding: 0 8%;
-            margin-bottom: 40px;
-            border-bottom: 1px solid #222;
+            margin-bottom: 30px;
+            border-bottom: 1px solid #111;
         }
 
         .header-bar h1 {
-            font-size: clamp(2rem, 8vw, 4rem);
-            color: #fff;
+            font-size: clamp(1.8rem, 7vw, 3rem);
             font-weight: 900;
-            letter-spacing: -1px;
+            color: #fff;
         }
 
         .container {
-            max-width: 1100px;
+            max-width: 1000px;
             margin: 0 auto;
             display: flex;
             flex-direction: column;
-            gap: 20px;
+            gap: 12px;
             padding: 0 15px;
         }
 
-        /* كتلة الدرس مع إطار خارجي ثابت */
-        .lesson-box {
+        /* البطاقة: الإطار الخارجي فقط */
+        .lesson-card {
             width: 100%;
-            height: 180px;
-            background: #080808;
-            /* إطار خارجي نحيف في البداية */
-            border: 2px solid #1a1a1a;
+            height: 140px;
+            background: #050505;
+            border: 2px solid #121212; 
             border-radius: 12px;
             display: flex;
             align-items: center;
-            padding: 0 40px;
+            padding: 0 35px;
             cursor: pointer;
             position: relative;
             transition: 0.5s cubic-bezier(0.16, 1, 0.3, 1);
@@ -62,39 +59,36 @@
 
         input[type="checkbox"] { display: none; }
 
-        /* النص: ذهبي عريض جداً */
-        .subject-text {
-            font-size: clamp(1.8rem, 6vw, 3.5rem);
-            color: #d4af37; 
+        /* النص الذهبي العريض (قبل الإنجاز) */
+        .title-text {
+            font-size: clamp(1.4rem, 5vw, 2.5rem);
+            color: #d4af37; /* ذهبي ملكي */
             font-weight: 900;
-            transition: 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+            transition: 0.7s cubic-bezier(0.16, 1, 0.3, 1);
             z-index: 2;
         }
 
-        /* عند الإنجاز: النص يهفت ويصبح رمادي وينشطب */
-        input[type="checkbox"]:checked ~ .subject-text {
-            color: #222; /* رمادي خافت جداً */
-            text-decoration: line-through #333 5px;
-            transform: scale(0.97);
+        /* تأثير الملح: النص يبهت جداً ويختفي تقريباً عند الإنجاز */
+        input[type="checkbox"]:checked ~ .title-text {
+            color: #121212; /* رمادي داكن جداً يذوب في السواد */
+            text-decoration: line-through #1a1a1a 4px;
+            transform: scale(0.96);
+            filter: blur(1px); /* تغبيش بسيط للتركيز على الباقي */
         }
 
-        /* تلوين الإطار الخارجي عند الإنجاز */
-        input[type="checkbox"]:checked ~ .lesson-box-border {
-            position: absolute;
-            inset: -2px;
-            border: 3px solid #00ff88; /* يلون الإطار بالزمردي */
-            border-radius: 12px;
-            box-shadow: 0 0 25px rgba(0, 255, 136, 0.2);
-            pointer-events: none;
-            z-index: 5;
+        /* تلوين الإطار الخارجي فقط بالزمردي */
+        input[type="checkbox"]:checked ~ .lesson-card {
+            border-color: #00ff88; 
+            background: #000;
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.1);
         }
 
-        /* رقم خلفي خافت */
+        /* رقم خلفي خافت جداً */
         .bg-num {
             position: absolute;
             left: 5%;
-            font-size: 8rem;
-            color: rgba(255, 255, 255, 0.01);
+            font-size: 7rem;
+            color: rgba(255, 255, 255, 0.005);
             font-weight: 900;
             z-index: 1;
         }
@@ -104,52 +98,67 @@
 <body>
 
     <div class="header-bar">
-        <h1>الأدب العربي.</h1>
+        <h1>منهج الأدب.</h1>
     </div>
 
-    <div class="container">
-        <script>
-            const subjects = [
-                "الأدب الـحـديـث", "مـدرسـة الإحـيـاء", "مـحـمـد سـعـيـد الـحـبـوبـي",
-                "عـلـي الـشـرقـي", "حـافـظ إبـراهـيـم", "الـجـواهـري",
-                "مـدرسـة الـمـهـجـر", "مـيـخـائـيـل نـعـمـه", "الـشـعـر الـحـر"
-            ];
+    <div class="container" id="list">
+        </div>
 
-            subjects.forEach((name, i) => {
-                document.write(`
-                    <label class="lesson-box">
-                        <input type="checkbox" id="item${i}" onchange="bassHit(this)">
-                        <div class="lesson-box-border"></div>
-                        <span class="bg-num">${i + 1}</span>
-                        <span class="subject-text">${name}</span>
-                    </label>
-                `);
+    <script>
+        const lessons = [
+            "الأدب الحديث (المقدمة)",
+            "مدرسة الإحياء (المحافظين)",
+            "الشاعر محمد سعيد الحبوبي",
+            "الشاعر علي الشرقي",
+            "الشاعر حافظ إبراهيم",
+            "الشاعر محمد مهدي الجواهري",
+            "مدرسة المهجر",
+            "ميخائيل نعمه",
+            "مدرسة الشعر الحر",
+            "الشاعر بدر شاكر السياب",
+            "الشاعر أدونيس",
+            "شعر القضية الفلسطينية",
+            "الشاعرة فدوى طوقان",
+            "الشاعر محمود درويش"
+        ];
+
+        const container = document.getElementById('list');
+
+        lessons.forEach((name, i) => {
+            const label = document.createElement('label');
+            label.innerHTML = `
+                <input type="checkbox" id="lesson-${i}" onchange="toggleLesson(this)">
+                <div class="lesson-card">
+                    <span class="bg-num">${i + 1}</span>
+                    <span class="title-text">${name}</span>
+                </div>
+            `;
+            container.appendChild(label);
+        });
+
+        function toggleLesson(el) {
+            if(el.checked) {
+                localStorage.setItem(el.id, 'done');
+                // صوت نبضة فخمة
+                const ac = new AudioContext();
+                const osc = ac.createOscillator();
+                const gn = ac.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(50, ac.currentTime);
+                gn.gain.setValueAtTime(0.3, ac.currentTime);
+                gn.gain.exponentialRampToValueAtTime(0.001, ac.currentTime + 0.4);
+                osc.connect(gn); gn.connect(ac.destination);
+                osc.start(); osc.stop(ac.currentTime + 0.4);
+            } else {
+                localStorage.removeItem(el.id);
+            }
+        }
+
+        window.onload = () => {
+            document.querySelectorAll('input').forEach(input => {
+                if(localStorage.getItem(input.id)) input.checked = true;
             });
-
-            function bassHit(el) {
-                if(el.checked) {
-                    localStorage.setItem(el.id, 'done');
-                    const ac = new AudioContext();
-                    const osc = ac.createOscillator();
-                    const gn = ac.createGain();
-                    osc.type = 'sine';
-                    osc.frequency.setValueAtTime(55, ac.currentTime);
-                    gn.gain.setValueAtTime(0.3, ac.currentTime);
-                    gn.gain.exponentialRampToValueAtTime(0.001, ac.currentTime + 0.5);
-                    osc.connect(gn); gn.connect(ac.destination);
-                    osc.start(); osc.stop(ac.currentTime + 0.5);
-                } else {
-                    localStorage.removeItem(el.id);
-                }
-            }
-
-            window.onload = () => {
-                document.querySelectorAll('input').forEach(input => {
-                    if(localStorage.getItem(input.id)) input.checked = true;
-                });
-            }
-        </script>
-    </div>
-
+        }
+    </script>
 </body>
 </html>
